@@ -22,10 +22,10 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Application
-    rhoCentralFoam
+    pisoCentralFoam
 
 Description
-    Density-based compressible flow solver based on central-upwind schemes of
+    Pressure-based semi implicit compressible flow solver based on central-upwind schemes of
     Kurganov and Tadmor
 
 \*---------------------------------------------------------------------------*/
@@ -35,7 +35,6 @@ Description
 #include "pimpleControl.H"
 #include "turbulenceModel.H"
 #include "zeroGradientFvPatchFields.H"
-#include "fixedRhoFvPatchScalarField.H"
 #include "coupledFvsPatchFields.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
