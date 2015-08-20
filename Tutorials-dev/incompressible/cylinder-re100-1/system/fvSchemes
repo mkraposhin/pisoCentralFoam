@@ -1,0 +1,78 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.3.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSchemes;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+ddtSchemes
+{
+    default         Euler;
+}
+
+gradSchemes
+{
+    default         Gauss linear;
+}
+
+divSchemes
+{
+    default         none;
+    div(tauMC)      Gauss linear;
+    div((-devRhoReff&U)) Gauss linear;
+    div(((rho*nuEff)*dev2(T(grad(U))))) Gauss linear;
+    
+    //momentum equation
+    div(phiNeg,U)	Gauss vanAlbadaV;
+    div(phiPos,U)	Gauss vanAlbadaV;
+
+    //energy equation
+    div(phiNeg,h)	Gauss vanAlbada;
+    div(phiPos,h)	Gauss vanAlbada;
+    div(phiNeg,Ek)	Gauss vanAlbada;
+    div(phiPos,Ek)	Gauss vanAlbada;
+
+    //continuity equation
+    div(phid_neg,p)	Gauss vanAlbada;
+    div(phid_pos,p)	Gauss vanAlbada;
+}
+
+laplacianSchemes
+{
+    default         Gauss linear corrected;
+}
+
+interpolationSchemes
+{
+    default         none;
+    
+    interpolate((rho*U))	linear;
+    
+    reconstruct(psi)		vanAlbada;
+    reconstruct(p)		vanAlbada;
+    reconstruct(U)		vanAlbadaV;
+    reconstruct(Dp)		vanAlbada;
+}
+
+snGradSchemes
+{
+    default         corrected;
+}
+
+fluxRequired
+{
+    default	none;
+    p;
+}
+
+// ************************************************************************* //
