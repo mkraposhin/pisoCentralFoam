@@ -9,50 +9,47 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       volVectorField;
-    object      U;
+    class       dictionary;
+    location    "system";
+    object      fvSolution;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 1 -1 0 0 0 0];
-
-internalField   uniform (3 0 0);
-
-boundaryField
+solvers
 {
-    inlet
+    rho
     {
-        type            fixedValue;
-        value           uniform (3 0 0);
+        solver          diagonal;
+    }
+    
+    U
+    {
+        solver          PBiCG;
+        preconditioner	DILU;
+        tolerance       1e-09;
+        relTol          0.0;
+    }
+    
+    p
+    {
+        solver          PBiCG;
+        preconditioner	DILU;
+        tolerance       1e-09;
+        relTol          0.0;
     }
 
-    outlet
+    "(h|k|omega)"
     {
-        type            inletOutlet;
-        inletValue      uniform (3 0 0);
-        value           uniform (3 0 0);
+        $U;
     }
+}
 
-    bottom
-    {
-        type            symmetryPlane;
-    }
-
-    top
-    {
-        type            symmetryPlane;
-    }
-
-    obstacle
-    {
-        type            fixedValue;
-        value		uniform (0 0 0);
-    }
-
-    defaultFaces
-    {
-        type            empty;
-    }
+PIMPLE
+{
+    momentumPredictor	true;
+    nNonOrthogonalCorrectors 0;
+    nCorrectors		2;
+    checkMeshCourantNo  true;
 }
 
 // ************************************************************************* //

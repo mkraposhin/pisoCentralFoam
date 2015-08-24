@@ -9,50 +9,47 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       volVectorField;
-    object      U;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 1 -1 0 0 0 0];
+application     pisoCentralFoam;
 
-internalField   uniform (3 0 0);
+startFrom       startTime;
 
-boundaryField
-{
-    inlet
-    {
-        type            fixedValue;
-        value           uniform (3 0 0);
-    }
+startTime       0;
 
-    outlet
-    {
-        type            inletOutlet;
-        inletValue      uniform (3 0 0);
-        value           uniform (3 0 0);
-    }
+stopAt          endTime;
 
-    bottom
-    {
-        type            symmetryPlane;
-    }
+endTime         4;
 
-    top
-    {
-        type            symmetryPlane;
-    }
+deltaT          0.00025;
 
-    obstacle
-    {
-        type            fixedValue;
-        value		uniform (0 0 0);
-    }
+writeControl    adjustableRunTime;
 
-    defaultFaces
-    {
-        type            empty;
-    }
-}
+writeInterval   0.1;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression off;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable true;
+
+adjustTimeStep  no;
+
+maxCo           0.2;
+
+maxDeltaT       1;
+
 
 // ************************************************************************* //

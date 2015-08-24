@@ -16,21 +16,20 @@ FoamFile
 
 dimensions      [0 1 -1 0 0 0 0];
 
-internalField   uniform (3 0 0);
+internalField   uniform (0 0 0);
 
 boundaryField
 {
     inlet
     {
-        type            fixedValue;
-        value           uniform (3 0 0);
+        type            zeroGradient;
     }
 
     outlet
     {
         type            inletOutlet;
-        inletValue      uniform (3 0 0);
-        value           uniform (3 0 0);
+        inletValue      uniform (0 0 0);
+        value           uniform (0 0 0);
     }
 
     bottom
@@ -45,7 +44,7 @@ boundaryField
 
     obstacle
     {
-        type            fixedValue;
+        type            movingWallVelocity;
         value		uniform (0 0 0);
     }
 

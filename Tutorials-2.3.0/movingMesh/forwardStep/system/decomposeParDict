@@ -9,50 +9,37 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       volVectorField;
-    object      U;
+    class       dictionary;
+    location    "system";
+    object      decomposeParDict;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 1 -1 0 0 0 0];
+numberOfSubdomains 4;
 
-internalField   uniform (3 0 0);
+method          simple;
 
-boundaryField
+simpleCoeffs
 {
-    inlet
-    {
-        type            fixedValue;
-        value           uniform (3 0 0);
-    }
-
-    outlet
-    {
-        type            inletOutlet;
-        inletValue      uniform (3 0 0);
-        value           uniform (3 0 0);
-    }
-
-    bottom
-    {
-        type            symmetryPlane;
-    }
-
-    top
-    {
-        type            symmetryPlane;
-    }
-
-    obstacle
-    {
-        type            fixedValue;
-        value		uniform (0 0 0);
-    }
-
-    defaultFaces
-    {
-        type            empty;
-    }
+    n               ( 2 2 1 );
+    delta           0.001;
 }
+
+hierarchicalCoeffs
+{
+    n               ( 1 1 1 );
+    delta           0.001;
+    order           xyz;
+}
+
+manualCoeffs
+{
+    dataFile        "";
+}
+
+distributed     no;
+
+roots           ( );
+
 
 // ************************************************************************* //
