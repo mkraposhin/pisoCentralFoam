@@ -4,4 +4,6 @@ set -x
 
 wmake
 
+cd pisoCentralDyMFoam; wmake; cd ../
+
 # ----------------------------------------------------------------- end-of-file
