@@ -3,6 +3,6 @@ cd ${0%/*} || exit 1    # run from this directory
 set -x
 
 wclean
-
+cd pisoCentralDyMFoam; wclean; cd ../
 
 # ----------------------------------------------------------------- end-of-file
