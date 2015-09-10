@@ -31,22 +31,50 @@ Description
 
 scalar CoNum = 0.0;
 scalar meanCoNum = 0.0;
+scalar velMag = 0.0;
+
+//if (mesh.nInternalFaces())
+//{
+//    scalarField sumPhi
+//    (
+//        fvc::surfaceSum(mag(phi))().internalField()
+//      / rho.internalField()
+//    );
+//
+//    CoNum = 0.5*gMax(sumPhi/mesh.V().field())*runTime.deltaTValue();
+//
+//    meanCoNum =
+//        0.5*(gSum(sumPhi)/gSum(mesh.V().field()))*runTime.deltaTValue();
+//}
+//
+//Info<< "Courant Number mean: " << meanCoNum
+//    << " max: " << CoNum << endl;
 
 if (mesh.nInternalFaces())
 {
-    scalarField sumPhi
+
+    surfaceScalarField phiOverRho =
+    mag
     (
-        fvc::surfaceSum(mag(phi))().internalField()
-      / rho.internalField()
+	phi / (p_pos * psi_pos * a_pos + p_neg * psi_neg * a_neg)
     );
 
-    CoNum = 0.5*gMax(sumPhi/mesh.V().field())*runTime.deltaTValue();
+    surfaceScalarField SfUfbyDelta =
+	mesh.surfaceInterpolation::deltaCoeffs()*phiOverRho*2.0;
 
-    meanCoNum =
-        0.5*(gSum(sumPhi)/gSum(mesh.V().field()))*runTime.deltaTValue();
+    meanCoNum = (sum(SfUfbyDelta)/sum(mesh.magSf())).value()*
+	runTime.deltaT().value();
+
+    CoNum = (max(SfUfbyDelta/mesh.magSf())*runTime.deltaT()).value();
+    
+    velMag = max(phiOverRho/mesh.magSf()).value();
 }
 
 Info<< "Courant Number mean: " << meanCoNum
-    << " max: " << CoNum << endl;
+    << " max: " << 		  CoNum
+    << " velocity magnitude: " << velMag
+    << endl;
+
+
 
 // ************************************************************************* //

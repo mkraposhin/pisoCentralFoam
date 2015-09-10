@@ -19,3 +19,4 @@ hEqn.solve();
 
 thermo.correct();
 
+Info << "max/min T:" << max(T).value() << "/" << min(T).value() << endl;

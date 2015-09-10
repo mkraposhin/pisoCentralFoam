@@ -63,18 +63,6 @@ int main(int argc, char *argv[])
     
     #include "createSurfaceFields.H"
     
-    volScalarField EkChange
-    (
-	"EkChange",
-	fvc::ddt(rho,Ek) * 0.0
-    );
-    
-    volScalarField dpdt
-    (
-	"dpdt",
-	fvc::ddt(p) * 0.0
-    );
-    
     surfaceScalarField kappa
     (
 	IOobject
@@ -179,12 +167,6 @@ int main(int argc, char *argv[])
 		aSf = am*a_pos;
 		a_neg = 1.0 - a_pos;
 
-//		psiU_pos= fvc::interpolate(psi*HbyA, pos, "reconstruct(U)");
-//		psiU_neg= fvc::interpolate(psi*HbyA, neg, "reconstruct(U)");
-//		
-//		phiv_pos= (psiU_pos / psi_pos) & mesh.Sf();
-//		phiv_neg= (psiU_neg / psi_neg) & mesh.Sf();
-
 		aphiv_pos = a_pos * (phiv_pos - fvc::meshPhi(rho,U)) - aSf;
 		aphiv_neg = a_neg * (phiv_neg - fvc::meshPhi(rho,U)) + aSf;
 	
@@ -233,10 +215,19 @@ int main(int argc, char *argv[])
 		
 		p_pos = fvc::interpolate(p, pos, "reconstruct(p)");
 		p_neg = fvc::interpolate(p, neg, "reconstruct(p)");
-
-		gradP = fvc::div((a_pos*p_pos + a_neg*p_neg)*mesh.Sf());
-		U = HbyA - rAU * gradP;
 		
+		phiv_pos= phiPos / (p_pos*psi_pos);
+		phiv_neg= phiNeg / (p_neg*psi_neg);
+		
+		ap = max(max(phiv_pos + cSf_pos, phiv_neg + cSf_neg), v_zero);
+		am = min(min(phiv_pos - cSf_pos, phiv_neg - cSf_neg), v_zero);
+		
+		a_pos = ap/(ap - am);
+		a_neg = 1.0 - a_pos;
+		
+		//gradp = fvc::grad(p);
+		gradp = fvc::div((a_pos*p_pos + a_neg*p_neg)*mesh.Sf());
+		U = HbyA - rAU * gradp;
 		U.correctBoundaryConditions();
 		
 		Info << "max(U): " << max(U).value() << endl;
@@ -244,23 +235,16 @@ int main(int argc, char *argv[])
 		rho = thermo.rho();
 	    }
 	    
+	    aSf = am*a_pos;
+	    phiv_pos *= a_pos;
+	    phiv_neg *= a_neg;
+	    aphiv_pos = phiv_pos - aSf;
+	    aphiv_neg = phiv_neg + aSf;
 	    amaxSf = max(mag(aphiv_pos), mag(aphiv_neg));
 	    
 	    surfaceScalarField amaxSfbyDelta
 	    (
 		mesh.surfaceInterpolation::deltaCoeffs()*amaxSf
-	    );
-	    
-	    surfaceScalarField cf_pos
-	    (
-		"cf_pos",
-		cSf_pos / mesh.magSf()
-	    );
-
-	    surfaceScalarField cf_neg
-	    (
-		"cf_neg",
-		cSf_neg / mesh.magSf()
 	    );
 	    
 	    surfaceScalarField Maf

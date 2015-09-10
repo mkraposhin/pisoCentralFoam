@@ -9,6 +9,7 @@ basicPsiThermo& thermo = pThermo();
 volScalarField& p = thermo.p();
 volScalarField& h = thermo.h();
 volScalarField& psi = const_cast<volScalarField&>(thermo.psi());
+const volScalarField& T = thermo.T();
 
 Info<< "Reading field U\n" << endl;
 volVectorField U
@@ -42,6 +43,24 @@ volScalarField rho
         IOobject::AUTO_WRITE
     ),
     thermo.rho()
+);
+
+volScalarField EkChange
+(
+    "EkChange",
+    fvc::ddt(rho,Ek) * 0.0
+);
+
+volScalarField dpdt
+(
+    "dpdt",
+    fvc::ddt(p) * 0.0
+);
+
+volVectorField gradp
+(
+    "gradp",
+    fvc::grad(p)
 );
 
 surfaceScalarField pos

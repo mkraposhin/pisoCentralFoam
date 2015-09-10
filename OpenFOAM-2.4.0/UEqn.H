@@ -1,8 +1,5 @@
-volVectorField gradP
-(
-    "gradP",
-    fvc::div((a_pos*p_pos + a_neg*p_neg)*mesh.Sf())
-);
+
+gradp = fvc::div((a_pos*p_pos + a_neg*p_neg)*mesh.Sf());
 
 fvVectorMatrix UEqn
 (
@@ -19,6 +16,6 @@ if (pimple.momentumPredictor())
 {
     solve
     (
-	UEqn == -gradP
+	UEqn == -gradp
     );
 }
