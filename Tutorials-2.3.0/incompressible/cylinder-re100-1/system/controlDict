@@ -45,9 +45,11 @@ timePrecision   6;
 
 runTimeModifiable true;
 
-adjustTimeStep  false;
+adjustTimeStep  true;
 
-maxCo           0.2;
+maxCo           0.5;
+
+CourantType	cellCourant;
 
 maxDeltaT       1;
 

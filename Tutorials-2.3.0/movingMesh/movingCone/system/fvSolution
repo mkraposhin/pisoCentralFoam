@@ -56,6 +56,9 @@ PIMPLE
     nCorrectors      2;
     nNonOrthogonalCorrectors 1;
     checkMeshCourantNo true;
+    
+    nonOrthogonalityThreshold	60.0;
+    skewnessThreshold		0.6;
 }
 
 

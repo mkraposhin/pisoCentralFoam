@@ -36,7 +36,7 @@ boundaryField
     }
     axis
     {
-        type            symmetryPlane;
+        type            empty;
     }
     left
     {
@@ -49,11 +49,11 @@ boundaryField
     }
     back
     {
-        type            wedge;
+        type            slip;
     }
     front
     {
-        type            wedge;
+        type            slip;
     }
 }
 

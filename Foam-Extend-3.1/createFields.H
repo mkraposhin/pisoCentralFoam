@@ -63,6 +63,14 @@ volVectorField gradp
     fvc::grad(p)
 );
 
+volVectorField limGradP
+(
+    "limGradP",
+    fvc::grad(p)
+);
+
+DynamicList<label> badQualityCells(0);
+
 surfaceScalarField pos
 (
     IOobject

@@ -1,6 +1,4 @@
 
-gradp = fvc::div((a_pos*p_pos + a_neg*p_neg)*mesh.Sf());
-
 fvVectorMatrix UEqn
 (
     fvm::ddt(rho,U)

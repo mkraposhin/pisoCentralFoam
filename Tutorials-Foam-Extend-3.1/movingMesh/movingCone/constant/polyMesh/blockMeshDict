@@ -111,7 +111,7 @@ boundary
     }
     back
     {
-        type wedge;
+        type slip;
         faces
         (
             (0 4 5 1)
@@ -123,7 +123,7 @@ boundary
     }
     front
     {
-        type wedge;
+        type slip;
         faces
         (
             (0 1 13 12)

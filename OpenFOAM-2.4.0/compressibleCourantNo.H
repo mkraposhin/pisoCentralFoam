@@ -33,48 +33,63 @@ scalar CoNum = 0.0;
 scalar meanCoNum = 0.0;
 scalar velMag = 0.0;
 
-//if (mesh.nInternalFaces())
-//{
-//    scalarField sumPhi
-//    (
-//        fvc::surfaceSum(mag(phi))().internalField()
-//      / rho.internalField()
-//    );
-//
-//    CoNum = 0.5*gMax(sumPhi/mesh.V().field())*runTime.deltaTValue();
-//
-//    meanCoNum =
-//        0.5*(gSum(sumPhi)/gSum(mesh.V().field()))*runTime.deltaTValue();
-//}
-//
-//Info<< "Courant Number mean: " << meanCoNum
-//    << " max: " << CoNum << endl;
-
-if (mesh.nInternalFaces())
+if ( CourantType == "cellCourant" )
 {
-
-    surfaceScalarField phiOverRho =
-    mag
+    if (mesh.nInternalFaces())
+    {
+    scalarField sumPhi
     (
-	phi / (p_pos * psi_pos * a_pos + p_neg * psi_neg * a_neg)
+	fvc::surfaceSum(mag(phi))().internalField()
+	/ rho.internalField()
     );
-
-    surfaceScalarField SfUfbyDelta =
-	mesh.surfaceInterpolation::deltaCoeffs()*phiOverRho*2.0;
-
-    meanCoNum = (sum(SfUfbyDelta)/sum(mesh.magSf())).value()*
-	runTime.deltaT().value();
-
-    CoNum = (max(SfUfbyDelta/mesh.magSf())*runTime.deltaT()).value();
     
-    velMag = max(phiOverRho/mesh.magSf()).value();
+    CoNum = 0.5*gMax(sumPhi/mesh.V().field())*runTime.deltaTValue();
+
+    meanCoNum =
+	0.5*(gSum(sumPhi)/gSum(mesh.V().field()))*runTime.deltaTValue();
+    }
+
+    Info<< "Courant Number mean: " << meanCoNum
+	<< " max: " << CoNum << endl;
 }
-
-Info<< "Courant Number mean: " << meanCoNum
-    << " max: " << 		  CoNum
-    << " velocity magnitude: " << velMag
-    << endl;
-
+else if ( CourantType == "faceCourant" )
+{
+    if (mesh.nInternalFaces())
+    {
+	
+	surfaceScalarField phiOverRho =
+	mag
+	(
+	    phi / (p_pos * psi_pos * a_pos + p_neg * psi_neg * a_neg)
+	);
+	
+	surfaceScalarField SfUfbyDelta =
+	    mesh.surfaceInterpolation::deltaCoeffs()*phiOverRho*2.0;
+	
+	meanCoNum = (sum(SfUfbyDelta)/sum(mesh.magSf())).value()*
+	    runTime.deltaT().value();
+	
+	CoNum = (max(SfUfbyDelta/mesh.magSf())*runTime.deltaT()).value();
+	
+	velMag = max(phiOverRho/mesh.magSf()).value();
+    }
+    
+    Info<< "Courant Number mean: " << meanCoNum
+	<< " max: " << 		  CoNum
+	<< " velocity magnitude: " << velMag
+	<< endl;
+}
+else
+{
+    FatalErrorIn
+    (
+	"compressibleCourantNo.H:"
+    )   << "Wrong type of Courant criterion: " << CourantType
+    << endl << " must be one of:" 
+    << endl << "1) cellCourant"
+    << endl << "2) faceCourant"
+    << endl << abort(FatalError);
+}
 
 
 // ************************************************************************* //

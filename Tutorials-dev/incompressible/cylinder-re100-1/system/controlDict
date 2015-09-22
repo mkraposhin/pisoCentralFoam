@@ -51,6 +51,8 @@ maxCo           0.2;
 
 maxDeltaT       1;
 
+CourantType	cellCourant;
+
 functions
 {
 

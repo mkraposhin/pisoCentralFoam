@@ -47,6 +47,8 @@ PISO
     nOuterCorrectors 1;
     nCorrectors      2;
     nNonOrthogonalCorrectors 0;
+    nonOrthogonalityThreshold	60;
+    skewnessThreshold		1.0;
 }
 
 

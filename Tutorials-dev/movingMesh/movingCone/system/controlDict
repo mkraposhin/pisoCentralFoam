@@ -49,6 +49,8 @@ adjustTimeStep  yes;
 
 maxCo           0.5;
 
+CourantType	faceCourant;
+
 functions
 {
     #include "cuttingPlane"

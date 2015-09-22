@@ -54,12 +54,12 @@ boundaryField
 
     back
     {
-        type            wedge;
+        type            slip;
     }
 
     front
     {
-        type            wedge;
+        type            slip;
     }
     
     axis

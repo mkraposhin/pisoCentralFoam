@@ -48,6 +48,8 @@ PIMPLE
 {
     momentumPredictor	true;
     nCorrectors		2;
+    nonOrthogonalityThreshold	60;
+    skewnessThreshold		0.5;
 }
 
 // ************************************************************************* //

@@ -49,6 +49,8 @@ PISO
     momentumPredictor	true;
     nNonOrthogonalCorrectors 0;
     nCorrectors		2;
+    nonOrthogonalityThreshold	60;
+    skewnessThreshold		0.6;
 }
 
 // ************************************************************************* //

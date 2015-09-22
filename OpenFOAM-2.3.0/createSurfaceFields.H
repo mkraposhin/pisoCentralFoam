@@ -115,3 +115,27 @@
 	phi * 0.0
     );
 
+    surfaceScalarField kappa
+    (
+	IOobject
+	(
+	    "kappa",
+	    runTime.timeName(),
+	    mesh,
+	    IOobject::NO_READ,
+	    IOobject::NO_WRITE
+	),
+	mesh,
+	dimless
+    );
+    
+    forAll(kappa, iFace)
+    {
+	kappa[iFace] = 0.0;
+    }
+    
+    forAll(kappa.boundaryField(), iPatch)
+    {
+	kappa.boundaryField()[iPatch] = 0.0;
+    }
+

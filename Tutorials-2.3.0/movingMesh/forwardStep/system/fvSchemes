@@ -32,23 +32,23 @@ divSchemes
     div((muEff*dev2(T(grad(U))))) Gauss linear;
     
     //momentum equation
-    div(phiNeg,U)	Gauss vanLeerV;
-    div(phiPos,U)	Gauss vanLeerV;
+    div(phiNeg,U)	Gauss vanAlbada;
+    div(phiPos,U)	Gauss vanAlbada;
 
     //energy equation
-    div(phiNeg,h)	Gauss vanLeer;
-    div(phiPos,h)	Gauss vanLeer;
-    div(phiNeg,Ek)	Gauss vanLeer;
-    div(phiPos,Ek)	Gauss vanLeer;
+    div(phiNeg,h)	Gauss vanAlbada;
+    div(phiPos,h)	Gauss vanAlbada;
+    div(phiNeg,Ek)	Gauss vanAlbada;
+    div(phiPos,Ek)	Gauss vanAlbada;
 
     //continuity equation
-    div(phid_neg,p)	Gauss vanLeer;
-    div(phid_pos,p)	Gauss vanLeer;
+    div(phid_neg,p)	Gauss vanAlbada;
+    div(phid_pos,p)	Gauss vanAlbada;
     
-    div(phi,omega)   Gauss vanLeer;
-    div(phi,k)	       Gauss vanLeer;
+    div(phi,omega)   Gauss vanAlbada;
+    div(phi,k)	       Gauss vanAlbada;
     
-    div(meshPhi,p)	Gauss vanLeer;
+    div(meshPhi,p)	Gauss vanAlbada;
 }
 
 laplacianSchemes
@@ -63,10 +63,10 @@ interpolationSchemes
     interpolate(rho)		linear;
     interpolate((rho*U))	linear;
     
-    reconstruct(psi)		vanLeer;
-    reconstruct(p)		vanLeer;
-    reconstruct(U)		vanLeerV;
-    reconstruct(Dp)		vanLeer;
+    reconstruct(psi)		vanAlbada;
+    reconstruct(p)		vanAlbada;
+    reconstruct(U)		vanAlbada;
+    reconstruct(Dp)		vanAlbada;
 }
 
 snGradSchemes

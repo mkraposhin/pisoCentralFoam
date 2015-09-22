@@ -32,8 +32,8 @@ divSchemes
     div((muEff*dev2(T(grad(U))))) Gauss linear;
     
     //momentum equation
-    div(phiNeg,U)	Gauss vanLeerV;
-    div(phiPos,U)	Gauss vanLeerV;
+    div(phiNeg,U)	Gauss vanLeer;
+    div(phiPos,U)	Gauss vanLeer;
 
     //energy equation
     div(phiNeg,h)	Gauss vanLeer;
@@ -63,7 +63,7 @@ interpolationSchemes
     
     reconstruct(psi)		vanLeer;
     reconstruct(p)		vanLeer;
-    reconstruct(U)		vanLeerV;
+    reconstruct(U)		vanLeer;
     reconstruct(Dp)		vanLeer;
 }
 
