@@ -1,5 +1,5 @@
 aphiv_pos = phiPos / (p_pos * psi_pos);
-aphiv_neg = phiNeg / (p_pos * psi_pos);
+aphiv_neg = phiNeg / (p_neg * psi_neg);
 amaxSf = max(mag(aphiv_pos), mag(aphiv_neg));
 
 surfaceScalarField amaxSfbyDelta
