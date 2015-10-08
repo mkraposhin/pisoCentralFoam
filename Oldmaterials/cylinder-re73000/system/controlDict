@@ -1,0 +1,93 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.3.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     rhoCentralFoam;
+
+startFrom     	latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         4;
+
+deltaT          1e-5;
+
+writeControl    adjustableRunTime;
+
+writeInterval   0.05;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression off;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable true;
+
+adjustTimeStep  true;
+
+maxCo           0.5;
+
+maxDeltaT       1e-3;
+
+functions
+{
+forceCoeffs_object
+ {
+ // rhoInf - reference density
+ // CofR - Centre of rotation
+ // dragDir - Direction of drag coefficient
+ // liftDir - Direction of lift coefficient
+ // pitchAxis - Pitching moment axis
+ // magUinf - free stream velocity magnitude
+ // lRef - reference length
+ // Aref - reference area
+ type forceCoeffs;
+ functionObjectLibs ("libforces.so");
+ //patches ("body1" "body2" "body3");
+ patches (pipe);
+
+ pName p;
+ Uname U;
+ rhoName rhoInf;
+ rhoInf 1.18;
+
+ //// Dump to file
+ log true;
+
+ CofR (0.0 0 0);
+ liftDir (0 1 0);
+ dragDir (1 0 0);
+ pitchAxis (0 0 1);
+ magUInf 8.98;
+ lRef 0.1222; // reference length for moments!!!
+ Aref 0.0001222; // reference area 1 for 2d
+
+ outputControl runTime;
+ writeInterval 0.001;
+
+ outputInterval 0.001;
+ }
+};
+// ************************************************************************* //
