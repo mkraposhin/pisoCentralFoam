@@ -19,11 +19,17 @@ Info << "Max/min c: " << max(c).value() << "/" << min(c).value() << endl;
 cSf_pos = fvc::interpolate(c, pos, "reconstruct(psi)")*mesh.magSf();
 cSf_neg = fvc::interpolate(c, neg, "reconstruct(psi)")*mesh.magSf();
 
-ap = max(max(phiv_pos - fvc::meshPhi(rho,U) + cSf_pos, phiv_neg - fvc::meshPhi(rho,U) + cSf_neg), v_zero);
-am = min(min(phiv_pos - fvc::meshPhi(rho,U) - cSf_pos, phiv_neg - fvc::meshPhi(rho,U) - cSf_neg), v_zero);
+rel_phiv_pos = phiv_pos - meshPhi;
+rel_phiv_neg = phiv_neg - meshPhi;
 
-aphiv_pos = a_pos * (phiv_pos - fvc::meshPhi(rho,U)) - aSf;
-aphiv_neg = a_neg * (phiv_neg - fvc::meshPhi(rho,U)) + aSf;
+MRF.makeRelative(rel_phiv_pos);
+MRF.makeRelative(rel_phiv_neg);
+
+ap = max(max(rel_phiv_pos + cSf_pos, rel_phiv_neg + cSf_neg), v_zero);
+am = min(min(rel_phiv_pos - cSf_pos, rel_phiv_neg - cSf_neg), v_zero);
+
+aphiv_pos = a_pos * (rel_phiv_pos) - aSf;
+aphiv_neg = a_neg * (rel_phiv_neg) + aSf;
 
 a_pos = ap/(ap - am);
 aSf = am*a_pos;

@@ -51,6 +51,7 @@ int main(int argc, char *argv[])
     pimpleControl pimple(mesh);
     
     #include "createFields.H"
+    #include "createMRF.H"
     #include "createTimeControls.H"
     bool checkMeshCourantNo =
             readBool(pimple.dict().lookup("checkMeshCourantNo"));
@@ -66,6 +67,24 @@ int main(int argc, char *argv[])
     #include "createSurfaceFields.H"
     #include "markBadQualityCells.H"
     
+    surfaceScalarField meshPhi
+    (
+	"volMeshPhi",
+	phiv_pos * 0.0
+    );
+    
+    surfaceScalarField rel_phiv_pos
+    (
+        "rel_phiv_pos",
+        phiv_pos - meshPhi
+    );
+    
+    surfaceScalarField rel_phiv_neg
+    (
+        "rel_phiv_neg",
+        phiv_neg - meshPhi
+    );
+    
     while (runTime.run())
     {
 	#include "acousticCourantNo.H"
@@ -80,9 +99,9 @@ int main(int argc, char *argv[])
 	p.oldTime();
 	U.oldTime();
 	h.oldTime();
-
+        
 	Info<< "Time = " << runTime.timeName() << nl << endl;
-
+        
 	// --- Move mesh and update fluxes
 	{
 	    // Do any mesh changes
@@ -90,15 +109,16 @@ int main(int argc, char *argv[])
 	    
 	    if (mesh.changing())
 	    {
+	        meshPhi = fvc::meshPhi(rho,U);
 		if (runTime.timeIndex() > 1)
 		{
-		    surfaceScalarField amNew = min(min(phiv_pos - fvc::meshPhi(rho,U) - cSf_pos, phiv_neg - fvc::meshPhi(rho,U) - cSf_neg), v_zero);
+		    surfaceScalarField amNew = min(min(phiv_pos - meshPhi - cSf_pos, phiv_neg - meshPhi - cSf_neg), v_zero);
 		    phiNeg += kappa*(amNew - am)*p_neg*psi_neg;
 		    phiPos += (1.0 - kappa)*(amNew - am)*p_neg*psi_neg;
 		}
 		else
 		{
-		    phiNeg -= fvc::meshPhi(rho,U) * fvc::interpolate(rho);
+		    phiNeg -= meshPhi * fvc::interpolate(rho);
 		}
 		
 		phi = phiPos + phiNeg;
@@ -141,7 +161,7 @@ int main(int argc, char *argv[])
 	
 	Ek = 0.5*magSqr(U);
 	EkChange = fvc::ddt(rho,Ek) + fvc::div(phiPos,Ek) + fvc::div(phiNeg,Ek);
-	dpdt = fvc::ddt(p) - fvc::div(fvc::meshPhi(rho,U), p);
+	dpdt = fvc::ddt(p) - fvc::div(meshPhi, p);
 	
 	runTime.write();
 
