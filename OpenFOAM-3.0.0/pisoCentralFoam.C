@@ -54,6 +54,7 @@ int main(int argc, char *argv[])
     #include "createTimeControls.H"
     #include "createRDeltaT.H"
     #include "createFields.H"
+    #include "createMRF.H"
     #include "initContinuityErrs.H"
     #include "readCourantType.H"
     
@@ -71,6 +72,8 @@ int main(int argc, char *argv[])
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
     
     Info<< "\nStarting time loop\n" << endl;
+    
+    #include "initKappaField.H"
     
     while (runTime.run())
     {

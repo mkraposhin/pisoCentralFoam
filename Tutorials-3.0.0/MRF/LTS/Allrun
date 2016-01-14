@@ -1,0 +1,4 @@
+#!/bin/sh
+
+./makeMesh
+rm -rf log; pisoCentralFoam | tee -a log;

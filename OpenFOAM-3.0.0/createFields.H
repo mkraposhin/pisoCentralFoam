@@ -5,6 +5,7 @@ autoPtr<psiThermo> pThermo
     psiThermo::New(mesh)
 );
 psiThermo& thermo = pThermo();
+thermo.correct();
 
 volScalarField& p = thermo.p();
 volScalarField& h = thermo.he();

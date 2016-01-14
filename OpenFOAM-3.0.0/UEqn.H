@@ -7,6 +7,8 @@ fvVectorMatrix UEqn
     +
     fvm::div(phiNeg,U)
     +
+    MRF.DDt(rho,U)
+    +
     turbulence->divDevRhoReff(U)
 );
 

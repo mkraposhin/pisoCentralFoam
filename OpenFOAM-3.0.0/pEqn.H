@@ -12,6 +12,9 @@ psiU_neg= fvc::interpolate(psi*HbyA, neg, "reconstruct(U)");
 phiv_pos= (psiU_pos / psi_pos) & mesh.Sf();
 phiv_neg= (psiU_neg / psi_neg) & mesh.Sf();
 
+MRF.makeRelative(phiv_pos);
+MRF.makeRelative(phiv_neg);
+
 c = sqrt(thermo.Cp()/thermo.Cv() / psi);
 
 cSf_pos = fvc::interpolate(c, pos, "reconstruct(psi)")*mesh.magSf();

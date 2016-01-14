@@ -111,8 +111,8 @@
     rDeltaT.correctBoundaryConditions();
 
     Info<< "Flow time scale min/max = "
-        << gMin(1/rDeltaT.internalField())
-        << ", " << gMax(1/rDeltaT.internalField()) << endl;
+        << gMin(1/(rDeltaT.internalField() + 1.0e-12))
+        << ", " << gMax(1/(rDeltaT.internalField() + 1.0e-12)) << endl;
 
     if (rDeltaTSmoothingCoeff < 1.0)
     {
