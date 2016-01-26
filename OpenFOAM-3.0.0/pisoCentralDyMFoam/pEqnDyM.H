@@ -69,7 +69,11 @@ while (pimple.correctNonOrthogonal())
 	pEqn_pos
 	+
 	pEqn_neg
+	==
+	fvOptions(psi,p,rho.name())
     );
+    
+    fvOptions.constrain(pEqn);
     
     pEqn.solve(mesh.solver(p.select(pimple.finalInnerIter())));
     
@@ -88,6 +92,7 @@ gradp = fvc::div((a_pos*p_pos + a_neg*p_neg)*mesh.Sf());
 #include "limitPressureGradient.H"
 U = HbyA - rAU * gradp;
 U.correctBoundaryConditions();
+fvOptions.correct(U);
 
 Info << "max(U): " << max(U).value() << endl;
 solve

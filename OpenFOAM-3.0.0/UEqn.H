@@ -10,7 +10,11 @@ fvVectorMatrix UEqn
     MRF.DDt(rho,U)
     +
     turbulence->divDevRhoReff(U)
+    ==
+    fvOptions(rho, U)
 );
+
+fvOptions.constrain(UEqn);
 
 if (pimple.momentumPredictor())
 {
@@ -18,4 +22,6 @@ if (pimple.momentumPredictor())
     (
 	UEqn == -gradp
     );
+    
+    fvOptions.correct(U);
 }

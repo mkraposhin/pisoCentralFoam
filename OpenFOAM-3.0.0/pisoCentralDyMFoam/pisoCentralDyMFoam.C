@@ -38,6 +38,7 @@ Description
 #include "zeroGradientFvPatchFields.H"
 #include "coupledFvsPatchFields.H"
 #include "cellQuality.H"
+#include "fvIOoptionList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -53,6 +54,7 @@ int main(int argc, char *argv[])
     #include "createFields.H"
     #include "createMRF.H"
     #include "createTimeControls.H"
+    #include "createFvOptions.H"
     bool checkMeshCourantNo =
             readBool(pimple.dict().lookup("checkMeshCourantNo"));
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -87,87 +89,98 @@ int main(int argc, char *argv[])
     
     while (runTime.run())
     {
-	#include "acousticCourantNo.H"
-	#include "compressibleCourantNo.H"
-	#include "readTimeControls.H"
-	#include "setDeltaT.H"
-	
-	runTime++;
+        #include "acousticCourantNo.H"
+        #include "compressibleCourantNo.H"
+        #include "readTimeControls.H"
+        #include "setDeltaT.H"
         
-	psi.oldTime();
-	rho.oldTime();
-	p.oldTime();
-	U.oldTime();
-	h.oldTime();
+        runTime++;
         
-	Info<< "Time = " << runTime.timeName() << nl << endl;
+        psi.oldTime();
+        rho.oldTime();
+        p.oldTime();
+        U.oldTime();
+        h.oldTime();
         
-	// --- Move mesh and update fluxes
-	{
-	    // Do any mesh changes
-	    mesh.update();
-	    
-	    if (mesh.changing())
-	    {
-	        meshPhi = fvc::meshPhi(rho,U);
-		if (runTime.timeIndex() > 1)
-		{
-		    surfaceScalarField amNew = min(min(phiv_pos - meshPhi - cSf_pos, phiv_neg - meshPhi - cSf_neg), v_zero);
-		    phiNeg += kappa*(amNew - am)*p_neg*psi_neg;
-		    phiPos += (1.0 - kappa)*(amNew - am)*p_neg*psi_neg;
-		}
-		else
-		{
-		    phiNeg -= meshPhi * fvc::interpolate(rho);
-		}
-		
-		phi = phiPos + phiNeg;
-		
-		if (checkMeshCourantNo)
-		{
-		    #include "meshCourantNo.H"
-		}
-		
-		#include "markBadQualityCells.H"
-	    }
-	}
-	
-	// --- Solve density
-	solve
-	(
-	    fvm::ddt(rho) + fvc::div(phi)
-	);
-	Info<< "rho max/min : " << max(rho).value()
-	<< " " << min(rho).value() << endl;
-	
-	
-	// --- Solve momentum
-	#include "UEqn.H"
-	
-	// --- Solve energy
-	#include "hEqn.H"
-	
-	// --- Solve pressure (PISO)
-	{
-	    while (pimple.correct())
-	    {
-		#include "pEqnDyM.H"
-	    }
-	    #include "updateKappa.H"
-	}
-	
-	// --- Solve turbulence
-	turbulence->correct();
-	
-	Ek = 0.5*magSqr(U);
-	EkChange = fvc::ddt(rho,Ek) + fvc::div(phiPos,Ek) + fvc::div(phiNeg,Ek);
-	dpdt = fvc::ddt(p) - fvc::div(meshPhi, p);
-	
-	runTime.write();
+        Info<< "Time = " << runTime.timeName() << nl << endl;
+        
+        // --- Move mesh and update fluxes
+        {
+           // Do any mesh changes
+           mesh.update();
+           
+            if (mesh.changing())
+            {
+                meshPhi = fvc::meshPhi(rho,U);
+                if (runTime.timeIndex() > 1)
+                {
+                    surfaceScalarField amNew = min(min(phiv_pos - meshPhi - cSf_pos, phiv_neg - meshPhi - cSf_neg), v_zero);
+                    phiNeg += kappa*(amNew - am)*p_neg*psi_neg;
+                    phiPos += (1.0 - kappa)*(amNew - am)*p_neg*psi_neg;
+                }
+                else
+                {
+                    phiNeg -= meshPhi * fvc::interpolate(rho);
+                }
+                
+                phi = phiPos + phiNeg;
+                
+                if (checkMeshCourantNo)
+                {
+                    #include "meshCourantNo.H"
+                }
+                
+                #include "markBadQualityCells.H"
+            }
+        }
+        
+        // --- Solve density
+        {
+            fvScalarMatrix rhoEqn
+            (
+                fvm::ddt(rho) + fvc::div(phi)
+                ==
+                fvOptions(rho)
+            );
+            
+            fvOptions.constrain(rhoEqn);
+            
+            rhoEqn.solve();
+            
+            fvOptions.correct(rho);
 
-	Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
-	    << "  ClockTime = " << runTime.elapsedClockTime() << " s"
-	    << nl << endl;
+            Info<< "rho max/min : " << max(rho).value()
+            << " / " << min(rho).value() << endl;
+        }
+        
+        
+        // --- Solve momentum
+        #include "UEqn.H"
+        
+        // --- Solve energy
+        #include "hEqn.H"
+        
+        // --- Solve pressure (PISO)
+        {
+            while (pimple.correct())
+            {
+                #include "pEqnDyM.H"
+            }
+            #include "updateKappa.H"
+        }
+        
+        // --- Solve turbulence
+        turbulence->correct();
+        
+        Ek = 0.5*magSqr(U);
+        EkChange = fvc::ddt(rho,Ek) + fvc::div(phiPos,Ek) + fvc::div(phiNeg,Ek);
+        dpdt = fvc::ddt(p) - fvc::div(meshPhi, p);
+        
+        runTime.write();
+
+        Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
+            << "  ClockTime = " << runTime.elapsedClockTime() << " s"
+            << nl << endl;
     }
 
     Info<< "End\n" << endl;

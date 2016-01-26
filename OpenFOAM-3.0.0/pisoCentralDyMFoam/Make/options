@@ -10,6 +10,7 @@ EXE_INC = \
     -I$(LIB_SRC)/meshTools/lnInclude \
     -I$(LIB_SRC)/dynamicFvMesh/lnInclude \
     -I$(LIB_SRC)/dynamicMesh/lnInclude  \
+    -I$(LIB_SRC)/fvOptions/lnInclude \
     -I../
 
 EXE_LIBS = \
@@ -23,5 +24,6 @@ EXE_LIBS = \
     -lmeshTools \
     -ldynamicFvMesh \
     -ltopoChangerFvMesh \
-    -ldynamicMesh
+    -ldynamicMesh \
+    -lfvOptions
 

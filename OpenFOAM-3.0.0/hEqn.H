@@ -13,9 +13,15 @@ fvScalarMatrix hEqn
     dpdt
     +
     fvc::div( ((-turbulence->devRhoReff()) & U) )
+    +
+    fvOptions(rho,h)
 );
 
+fvOptions.constrain(hEqn);
+
 hEqn.solve();
+
+fvOptions.correct(h);
 
 thermo.correct();
 
