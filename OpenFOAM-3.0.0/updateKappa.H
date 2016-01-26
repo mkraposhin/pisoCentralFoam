@@ -25,10 +25,14 @@ if (LTS)
 #endif
 
 kappa = 
-    min
+    max
     (
-	Maf / (amaxSfbyDelta/mesh.magSf() * cDeltaT),
-	scalar(1.0)
+        min
+        (
+            Maf / (amaxSfbyDelta/mesh.magSf() * cDeltaT),
+            scalar(1.0)
+        ),
+        0.0
     );
 
 forAll(kappa.boundaryField(), iPatch)

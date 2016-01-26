@@ -39,6 +39,7 @@ Description
 #include "localEulerDdtScheme.H"
 #include "fvcSmooth.H"
 #include "cellQuality.H"
+#include "fvIOoptionList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -54,6 +55,7 @@ int main(int argc, char *argv[])
     #include "createTimeControls.H"
     #include "createRDeltaT.H"
     #include "createFields.H"
+    #include "createFvOptions.H"
     #include "createMRF.H"
     #include "initContinuityErrs.H"
     #include "readCourantType.H"
@@ -65,8 +67,8 @@ int main(int argc, char *argv[])
     
     if (!LTS)
     {
-	#include "compressibleCourantNo.H"
-	#include "setInitialDeltaT.H"
+        #include "compressibleCourantNo.H"
+        #include "setInitialDeltaT.H"
     }
     
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -77,63 +79,77 @@ int main(int argc, char *argv[])
     
     while (runTime.run())
     {
-	if (LTS)
-	{
-	    #include "setRDeltaT.H"
-	}
-	else
-	{
-	    #include "acousticCourantNo.H"
-	    #include "compressibleCourantNo.H"
-	    #include "readTimeControls.H"
-	    #include "setDeltaT.H"
-	}
-	
-	runTime++;
+        if (LTS)
+        {
+            #include "setRDeltaT.H"
+        }
+        else
+        {
+            #include "acousticCourantNo.H"
+            #include "compressibleCourantNo.H"
+            #include "readTimeControls.H"
+            #include "setDeltaT.H"
+        }
         
-	psi.oldTime();
-	rho.oldTime();
-	p.oldTime();
-	U.oldTime();
-	h.oldTime();
-	
-	Info<< "Time = " << runTime.timeName() << nl << endl;
-	
-	// --- Solve density
-	solve
-	(
-	    fvm::ddt(rho) + fvc::div(phi)
-	);
-	
-	// --- Solve momentum
-	#include "UEqn.H"
-	
-	// --- Solve energy
-	#include "hEqn.H"
-	
-	// --- Solve pressure (PISO)
-	{
-	    while (pimple.correct())
-	    {
-		#include "pEqn.H"
-	    }
-	    
-	    #define PISOCENTRALFOAM_LTS
-	    #include "updateKappa.H"
-	}
-	
-	// --- Solve turbulence
-	turbulence->correct();
-	
-	Ek = 0.5*magSqr(U);
-	EkChange = fvc::ddt(rho,Ek) + fvc::div(phiPos,Ek) + fvc::div(phiNeg,Ek);
-	dpdt = fvc::ddt(p);
-	
-	runTime.write();
-	
-	Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
-	    << "  ClockTime = " << runTime.elapsedClockTime() << " s"
-	    << nl << endl;
+        runTime++;
+        
+        psi.oldTime();
+        rho.oldTime();
+        p.oldTime();
+        U.oldTime();
+        h.oldTime();
+        
+        Info<< "Time = " << runTime.timeName() << nl << endl;
+        
+        // --- Solve density
+        {
+            fvScalarMatrix rhoEqn
+            (
+                fvm::ddt(rho) + fvc::div(phi)
+                ==
+                fvOptions(rho)
+            );
+            
+            fvOptions.constrain(rhoEqn);
+            
+            rhoEqn.solve();
+            
+            fvOptions.correct(rho);
+            
+            Info<< "rho max/min : " << max(rho).value()
+            << " / " << min(rho).value() << endl;
+        }
+        
+        
+        // --- Solve momentum
+        #include "UEqn.H"
+        
+        // --- Solve energy
+        #include "hEqn.H"
+        
+        // --- Solve pressure (PISO)
+        {
+            while (pimple.correct())
+            {
+                #include "pEqn.H"
+            }
+            
+            #define PISOCENTRALFOAM_LTS
+            #include "updateKappa.H"
+        }
+        
+        // --- Solve turbulence
+        turbulence->correct();
+        
+        Ek = 0.5*magSqr(U);
+        EkChange = fvc::ddt(rho,Ek) + fvc::div(phiPos,Ek) + fvc::div(phiNeg,Ek);
+        dpdt = fvc::ddt(p);
+        
+        runTime.write();
+        
+        Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
+            << "  ClockTime = " << runTime.elapsedClockTime() << " s"
+            << nl << endl;
     }
 
     Info<< "End\n" << endl;

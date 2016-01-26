@@ -16,10 +16,14 @@ surfaceScalarField Maf
 Info << "max/min Maf: " << max(Maf).value() << "/" << min(Maf).value() << endl;
 
 kappa = 
-    min
+    max
     (
-	Maf / (amaxSfbyDelta/mesh.magSf() * runTime.deltaT()),
-	scalar(1.0)
+        min
+        (
+            Maf / (amaxSfbyDelta/mesh.magSf() * runTime.deltaT()),
+            scalar(1.0)
+        ),
+        0.0
     );
 
 forAll(kappa.boundaryField(), iPatch)
