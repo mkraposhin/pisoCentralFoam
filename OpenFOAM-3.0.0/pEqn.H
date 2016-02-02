@@ -91,6 +91,9 @@ U.correctBoundaryConditions();
 fvOptions.correct(U);
 
 Info << "max(U): " << max(U).value() << endl;
+
+Info << "max/min of p: " << max(p).value() << "/" << min(p).value() << endl;
+
 solve
 (
     fvm::ddt(rho) + fvc::div(phi)
