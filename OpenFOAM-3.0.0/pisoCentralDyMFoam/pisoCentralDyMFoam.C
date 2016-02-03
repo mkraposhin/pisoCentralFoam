@@ -112,6 +112,7 @@ int main(int argc, char *argv[])
             if (mesh.changing())
             {
                 meshPhi = fvc::meshPhi(rho,U);
+                
                 if (runTime.timeIndex() > 1)
                 {
                     surfaceScalarField amNew = min(min(phiv_pos - meshPhi - cSf_pos, phiv_neg - meshPhi - cSf_neg), v_zero);
@@ -127,7 +128,7 @@ int main(int argc, char *argv[])
                 
                 if (checkMeshCourantNo)
                 {
-                    #include "meshCourantNo.H"
+                    #include "customMeshCourantNo.H"
                 }
                 
                 #include "markBadQualityCells.H"
