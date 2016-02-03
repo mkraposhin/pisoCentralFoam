@@ -46,7 +46,7 @@ divSchemes
     div(phid_neg,p)	Gauss vanLeer;
     div(phid_pos,p)	Gauss vanLeer;
     
-    div(meshPhi,p)	Gauss vanLeer;
+    div(volMeshPhi,p)	Gauss vanLeer;
 }
 
 laplacianSchemes

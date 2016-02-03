@@ -48,7 +48,7 @@ divSchemes
     div(phi,omega)   Gauss vanLeer;
     div(phi,k)	       Gauss vanLeer;
     
-    div(meshPhi,p)	Gauss vanLeer;
+    div(volMeshPhi,p)	Gauss vanLeer;
 }
 
 laplacianSchemes
