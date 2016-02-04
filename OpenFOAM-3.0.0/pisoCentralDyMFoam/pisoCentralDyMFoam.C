@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
            
             if (mesh.changing())
             {
-                meshPhi = fvc::meshPhi(rho,U);
+                meshPhi = fvc::meshPhi(rho,U)();
                 
                 if (runTime.timeIndex() > 1)
                 {
