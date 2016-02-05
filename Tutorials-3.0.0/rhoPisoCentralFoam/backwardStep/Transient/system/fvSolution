@@ -1,0 +1,64 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.3.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+solvers
+{
+    rho
+    {
+        solver          diagonal;
+    }
+    
+    U
+    {
+        solver          smoothSolver;
+        smoother	DILUGaussSeidel;
+        tolerance       1e-09;
+        relTol          0.0;
+    }
+    
+    p
+    {
+        solver          GAMG;
+	    preconditioner 
+	    tolerance       1e-08;
+	    relTol          1e-5;
+	    smoother        GaussSeidel;
+	    nPreSweeps      0;
+	    nPostSweeps     2;
+	    nFinestSweeps   2;
+	    cacheAgglomeration true;
+	    nCellsInCoarsestLevel 20;
+	    agglomerator    faceAreaPair;
+	    mergeLevels     1;
+    }
+
+    "(h|k|omega)"
+    {
+        $U;
+    }
+}
+
+PIMPLE
+{
+    momentumPredictor	true;
+    nNonOrthogonalCorrectors 0;
+    nCorrectors		2;
+    nonOrthogonalityThreshold	60.0;
+    skewnessThreshold		1.0;
+}
+
+// ************************************************************************* //
