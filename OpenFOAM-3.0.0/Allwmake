@@ -5,5 +5,6 @@ set -x
 wmake
 
 cd pisoCentralDyMFoam; wmake; cd ../
+cd rhoPisoCentralFoam; wmake; cd ../
 
 # ----------------------------------------------------------------- end-of-file
