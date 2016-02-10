@@ -1,4 +1,6 @@
 
+MRF.correctBoundaryVelocity(U);
+
 fvVectorMatrix UEqn
 (
     fvm::ddt(rho,U)
