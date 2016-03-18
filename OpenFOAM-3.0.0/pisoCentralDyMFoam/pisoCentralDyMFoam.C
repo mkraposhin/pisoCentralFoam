@@ -86,7 +86,9 @@ int main(int argc, char *argv[])
         "rel_phiv_neg",
         phiv_neg - meshPhi
     );
-    
+
+    #include "initKappaFieldDyM.H"
+
     while (runTime.run())
     {
         #include "acousticCourantNo.H"

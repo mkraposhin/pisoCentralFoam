@@ -98,6 +98,7 @@ int main(int argc, char *argv[])
         p.oldTime();
         U.oldTime();
         h.oldTime();
+        Ek.oldTime();
         
         Info<< "Time = " << runTime.timeName() << nl << endl;
         
@@ -143,6 +144,7 @@ int main(int argc, char *argv[])
         
         Ek = 0.5*magSqr(U);
         EkChange = fvc::ddt(rho,Ek) + fvc::div(phiPos,Ek) + fvc::div(phiNeg,Ek);
+        dissip = fvc::div( ((-turbulence->devRhoReff()) & U) );
         dpdt = fvc::ddt(p);
         
         runTime.write();

@@ -28,12 +28,12 @@ MRF.makeRelative(rel_phiv_neg);
 ap = max(max(rel_phiv_pos + cSf_pos, rel_phiv_neg + cSf_neg), v_zero);
 am = min(min(rel_phiv_pos - cSf_pos, rel_phiv_neg - cSf_neg), v_zero);
 
-aphiv_pos = a_pos * (rel_phiv_pos) - aSf;
-aphiv_neg = a_neg * (rel_phiv_neg) + aSf;
-
 a_pos = ap/(ap - am);
 aSf = am*a_pos;
 a_neg = 1.0 - a_pos;
+
+aphiv_pos = a_pos * rel_phiv_pos - aSf;
+aphiv_neg = a_neg * rel_phiv_neg + aSf;
 
 phid_pos = aphiv_pos * psi_pos;
 phid_neg = aphiv_neg * psi_neg;
