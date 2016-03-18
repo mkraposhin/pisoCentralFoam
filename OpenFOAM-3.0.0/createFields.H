@@ -58,6 +58,12 @@ volScalarField dpdt
     p / runTime.deltaT() * 0.0
 );
 
+volScalarField dissip
+(
+    "dissip",
+    dpdt
+);
+
 volVectorField gradp
 (
     "gradp",

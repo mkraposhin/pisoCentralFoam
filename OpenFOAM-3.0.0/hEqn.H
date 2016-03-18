@@ -12,7 +12,7 @@ fvScalarMatrix hEqn
     ==
     dpdt
     +
-    fvc::div( ((-turbulence->devRhoReff()) & U) )
+    dissip
     +
     fvOptions(rho,h)
 );
